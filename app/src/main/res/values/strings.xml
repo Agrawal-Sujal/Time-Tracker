@@ -1,3 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Time Tracker</string>
+    <string name="channel_id">timer_channel</string>
+    <string name="channel_name">Timer Notifications</string>
 </resources>
