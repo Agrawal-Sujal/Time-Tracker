@@ -43,6 +43,7 @@ class TimerService : LifecycleService() {
         const val ACTION_RESUME = "com.timetracker.ACTION_RESUME"
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()

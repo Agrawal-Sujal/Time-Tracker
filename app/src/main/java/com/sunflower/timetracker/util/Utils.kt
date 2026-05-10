@@ -21,10 +21,10 @@ fun formatHours(ms: Long): String {
     return "%.1fh".format(hours)
 }
 
-fun formatDateTime(epochMs: Long): String {
-    val sdf = java.text.SimpleDateFormat("dd MMM yyyy, hh:mm a", java.util.Locale.getDefault())
-    return sdf.format(java.util.Date(epochMs))
-}
+//fun formatDateTime(epochMs: Long): String {
+//    val sdf = java.text.SimpleDateFormat("dd MMM yyyy, hh:mm a", java.util.Locale.getDefault())
+//    return sdf.format(java.util.Date(epochMs))
+//}
 
 fun formatTime(epochMs: Long): String {
     val sdf = java.text.SimpleDateFormat("hh:mm a", java.util.Locale.getDefault())

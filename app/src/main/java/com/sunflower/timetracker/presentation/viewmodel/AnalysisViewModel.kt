@@ -1,7 +1,5 @@
 package com.sunflower.timetracker.presentation.viewmodel
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sunflower.timetracker.data.repository.TimeTrackerRepository
@@ -40,6 +38,7 @@ class AnalysisViewModel @Inject constructor(
     private val _selectedTag = MutableStateFlow<Tag?>(null)
     val selectedTag: StateFlow<Tag?> = _selectedTag.asStateFlow()
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     val stats: StateFlow<List<TagStats>> = combine(_period, _sortMode) { period, sort ->
         val rawFlow = when (period) {
             AnalysisPeriod.DAY -> repository.getDayStats()
@@ -55,6 +54,7 @@ class AnalysisViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     // All sessions for the selected tag (all-time, not period-filtered)
+    @OptIn(ExperimentalCoroutinesApi::class)
     val tagSessions: StateFlow<List<TimeSession>> = _selectedTag
         .flatMapLatest { tag ->
             if (tag == null) flowOf(emptyList())

@@ -33,7 +33,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sunflower.timetracker.domain.model.Tag
@@ -82,15 +81,15 @@ fun TagChip(
     }
 }
 
-@Composable
-fun TagColorDot(colorHex: String, size: Dp = 10.dp) {
-    Box(
-        modifier = Modifier
-            .size(size)
-            .clip(CircleShape)
-            .background(parseColor(colorHex))
-    )
-}
+//@Composable
+//fun TagColorDot(colorHex: String, size: Dp = 10.dp) {
+//    Box(
+//        modifier = Modifier
+//            .size(size)
+//            .clip(CircleShape)
+//            .background(parseColor(colorHex))
+//    )
+//}
 
 @Composable
 fun SectionCard(

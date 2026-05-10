@@ -722,7 +722,7 @@ private fun PeriodToggle(
             .padding(4.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        AnalysisPeriod.values().forEach { p ->
+        AnalysisPeriod.entries.forEach { p ->
             val sel = p == current
             Box(
                 modifier = Modifier

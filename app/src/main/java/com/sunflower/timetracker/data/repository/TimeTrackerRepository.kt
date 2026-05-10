@@ -1,7 +1,5 @@
 package com.sunflower.timetracker.data.repository
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.sunflower.timetracker.data.local.dao.TagDao
 import com.sunflower.timetracker.data.local.dao.TimeSessionDao
 import com.sunflower.timetracker.data.local.entity.TagEntity

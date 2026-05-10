@@ -25,7 +25,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val repository: TimeTrackerRepository,
-    @ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context
 ) : ViewModel() {
 
     val tags: StateFlow<List<Tag>> = repository.getAllTags()
@@ -53,7 +53,7 @@ class HomeViewModel @Inject constructor(
                 if (session != null && !session.isPaused) {
                     _elapsedMs.value =
                         session.pausedElapsedMs + (System.currentTimeMillis() - session.startTime)
-                } else if (session != null && session.isPaused) {
+                } else if (session != null) {
                     _elapsedMs.value = session.pausedElapsedMs
                 } else {
                     _elapsedMs.value = 0L
