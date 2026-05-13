@@ -30,6 +30,7 @@ class TimerService : LifecycleService() {
     lateinit var repository: TimeTrackerRepository
 
     private var tickJob: Job? = null
+    private var observationJob: Job? = null
     private var currentTagName: String = ""
     private var sessionStartMs: Long = 0L
     private var pausedElapsedMs: Long = 0L
@@ -62,34 +63,28 @@ class TimerService : LifecycleService() {
             }
 
             ACTION_PAUSE -> {
-                isPaused = true
-                tickJob?.cancel()
-                updateNotification(currentTagName, formatDuration(pausedElapsedMs), paused = true)
-                return START_STICKY
+                lifecycleScope.launch {
+                    repository.pauseActiveSession()
+                }
             }
 
             ACTION_RESUME -> {
-                isPaused = false
-                // re-read from DB to get fresh startTime
                 lifecycleScope.launch {
-                    val session = repository.getActiveSessionOnce()
-                    if (session != null) {
-                        sessionStartMs = session.startTime
-                        pausedElapsedMs = session.pausedElapsedMs
-                    }
-                    startTicking()
+                    repository.resumeActiveSession()
                 }
-                return START_STICKY
             }
         }
 
-        startForeground(NOTIFICATION_ID, buildNotification("Starting…", "0:00:00", false))
-        observeActiveSession()
+        if (observationJob == null || observationJob?.isActive == false) {
+            startForeground(NOTIFICATION_ID, buildNotification("Starting…", "0:00:00", false))
+            observeActiveSession()
+        }
         return START_STICKY
     }
 
     private fun observeActiveSession() {
-        lifecycleScope.launch {
+        observationJob?.cancel()
+        observationJob = lifecycleScope.launch {
             repository.getActiveSession().collectLatest { session ->
                 if (session == null) {
                     tickJob?.cancel()
@@ -101,12 +96,13 @@ class TimerService : LifecycleService() {
                 sessionStartMs = session.startTime
                 pausedElapsedMs = session.pausedElapsedMs
 
-                // Resolve tag name once
+                // Resolve tag name
                 val tags = repository.getAllTags().first()
                 currentTagName = tags.find { it.id == session.tagId }?.name ?: "Timer"
 
-                if (!isPaused) startTicking()
-                else {
+                if (!isPaused) {
+                    startTicking()
+                } else {
                     tickJob?.cancel()
                     updateNotification(
                         currentTagName,
@@ -145,23 +141,26 @@ class TimerService : LifecycleService() {
             Intent(this, TimerService::class.java).apply { action = ACTION_STOP },
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
+        
+        val action = if (paused) ACTION_RESUME else ACTION_PAUSE
+        val requestCode = if (paused) 3 else 2
+        
         val pauseResumeIntent = PendingIntent.getService(
-            this, 2,
-            Intent(this, TimerService::class.java).apply {
-                action = if (paused) ACTION_RESUME else ACTION_PAUSE
-            },
+            this, requestCode,
+            Intent(this, TimerService::class.java).apply { this.action = action },
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
-        val icon =
-            if (paused) android.R.drawable.ic_media_play else android.R.drawable.ic_media_pause
+        
+        val icon = if (paused) android.R.drawable.ic_media_play else android.R.drawable.ic_media_pause
         val prefix = if (paused) "⏸" else "⏱"
 
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.ic_media_play)
+            .setSmallIcon(if (paused) android.R.drawable.ic_media_play else android.R.drawable.ic_media_pause)
             .setContentTitle("$prefix $title")
             .setContentText(elapsed)
             .setOngoing(true)
             .setShowWhen(false)
+            .setOnlyAlertOnce(true)
             .setContentIntent(openIntent)
             .addAction(icon, if (paused) "Resume" else "Pause", pauseResumeIntent)
             .addAction(android.R.drawable.ic_delete, "Stop", stopIntent)
