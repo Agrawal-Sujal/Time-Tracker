@@ -38,9 +38,9 @@ class TimerService : LifecycleService() {
     companion object {
         const val NOTIFICATION_ID = 1001
         const val CHANNEL_ID = "timer_channel"
-        const val ACTION_STOP = "com.timetracker.ACTION_STOP"
-        const val ACTION_PAUSE = "com.timetracker.ACTION_PAUSE"
-        const val ACTION_RESUME = "com.timetracker.ACTION_RESUME"
+        const val ACTION_STOP = "com.sunflower.timetracker.ACTION_STOP"
+        const val ACTION_PAUSE = "com.sunflower.timetracker.ACTION_PAUSE"
+        const val ACTION_RESUME = "com.sunflower.timetracker.ACTION_RESUME"
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
