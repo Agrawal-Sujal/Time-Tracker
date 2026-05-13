@@ -24,5 +24,5 @@ data class TimeSessionEntity(
     val endTime: Long? = null,     // null = running or paused
     val durationMs: Long = 0,      // cached duration for finished sessions
     val isPaused: Boolean = false, // true while paused
-    val pausedElapsedMs: Long = 0  // how many ms elapsed before pause
+    val latestStartTime: Long
 )

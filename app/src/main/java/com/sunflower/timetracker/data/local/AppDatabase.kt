@@ -9,7 +9,7 @@ import com.sunflower.timetracker.data.local.entity.TimeSessionEntity
 
 @Database(
     entities = [TagEntity::class, TimeSessionEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

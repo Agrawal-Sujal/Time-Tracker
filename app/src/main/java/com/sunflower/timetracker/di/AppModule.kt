@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.sunflower.timetracker.data.local.AppDatabase
 import com.sunflower.timetracker.data.local.dao.TagDao
 import com.sunflower.timetracker.data.local.dao.TimeSessionDao
+import com.sunflower.timetracker.data.local.migration.MIGRATION_1_2
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,7 +21,7 @@ object AppModule {
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): AppDatabase =
         Room.databaseBuilder(context, AppDatabase::class.java, "timetracker.db")
-            .fallbackToDestructiveMigration()
+            .addMigrations(MIGRATION_1_2)
             .build()
 
     @Provides

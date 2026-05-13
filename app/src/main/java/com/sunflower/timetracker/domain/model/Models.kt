@@ -14,7 +14,7 @@ data class TimeSession(
     val endTime: Long? = null,
     val durationMs: Long = 0,
     val isPaused: Boolean = false,
-    val pausedElapsedMs: Long = 0
+    val latestStartTime: Long
 )
 
 data class TagStats(

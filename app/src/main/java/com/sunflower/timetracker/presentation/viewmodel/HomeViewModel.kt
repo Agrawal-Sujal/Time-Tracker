@@ -34,8 +34,8 @@ class HomeViewModel @Inject constructor(
     private val _activeState = MutableStateFlow(ActiveSessionState(null, null, 0L))
     val activeState: StateFlow<ActiveSessionState> = _activeState.asStateFlow()
 
-    private val _elapsedMs = MutableStateFlow(0L)
-    val elapsedMs: StateFlow<Long> = _elapsedMs.asStateFlow()
+    private val _durationMs = MutableStateFlow(0L)
+    val durationMs: StateFlow<Long> = _durationMs.asStateFlow()
 
     init {
         observeActiveSession()
@@ -51,12 +51,12 @@ class HomeViewModel @Inject constructor(
                 _activeState.value = state
                 val session = state.session
                 if (session != null && !session.isPaused) {
-                    _elapsedMs.value =
-                        session.pausedElapsedMs + (System.currentTimeMillis() - session.startTime)
+                    _durationMs.value =
+                        session.durationMs + (System.currentTimeMillis() - session.latestStartTime)
                 } else if (session != null) {
-                    _elapsedMs.value = session.pausedElapsedMs
+                    _durationMs.value = session.durationMs
                 } else {
-                    _elapsedMs.value = 0L
+                    _durationMs.value = 0L
                 }
             }
         }
@@ -67,8 +67,8 @@ class HomeViewModel @Inject constructor(
             while (isActive) {
                 val session = _activeState.value.session
                 if (session != null && !session.isPaused) {
-                    _elapsedMs.value =
-                        session.pausedElapsedMs + (System.currentTimeMillis() - session.startTime)
+                    _durationMs.value =
+                        session.durationMs + (System.currentTimeMillis() - session.latestStartTime)
                 }
                 delay(500L)
             }
