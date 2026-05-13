@@ -33,7 +33,7 @@ class TimerService : LifecycleService() {
     private var observationJob: Job? = null
     private var currentTagName: String = ""
     private var sessionStartMs: Long = 0L
-    private var pausedElapsedMs: Long = 0L
+    private var durationMs: Long = 0L
     private var isPaused: Boolean = false
 
     companion object {
@@ -94,7 +94,7 @@ class TimerService : LifecycleService() {
                 }
                 isPaused = session.isPaused
                 sessionStartMs = session.startTime
-                pausedElapsedMs = session.pausedElapsedMs
+                durationMs = session.durationMs
 
                 // Resolve tag name
                 val tags = repository.getAllTags().first()
@@ -106,7 +106,7 @@ class TimerService : LifecycleService() {
                     tickJob?.cancel()
                     updateNotification(
                         currentTagName,
-                        formatDuration(pausedElapsedMs),
+                        formatDuration(durationMs),
                         paused = true
                     )
                 }
@@ -118,7 +118,7 @@ class TimerService : LifecycleService() {
         tickJob?.cancel()
         tickJob = lifecycleScope.launch {
             while (isActive && !isPaused) {
-                val elapsed = pausedElapsedMs + (System.currentTimeMillis() - sessionStartMs)
+                val elapsed = durationMs + (System.currentTimeMillis() - sessionStartMs)
                 updateNotification(currentTagName, formatDuration(elapsed), paused = false)
                 delay(1000L)
             }
@@ -150,19 +150,18 @@ class TimerService : LifecycleService() {
             Intent(this, TimerService::class.java).apply { this.action = action },
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
-        
-        val icon = if (paused) android.R.drawable.ic_media_play else android.R.drawable.ic_media_pause
-        val prefix = if (paused) "⏸" else "⏱"
+
+        val actionIcon = if (paused) android.R.drawable.ic_media_play else android.R.drawable.ic_media_pause
 
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(if (paused) android.R.drawable.ic_media_play else android.R.drawable.ic_media_pause)
-            .setContentTitle("$prefix $title")
+            .setSmallIcon(if (paused) android.R.drawable.ic_media_pause else android.R.drawable.ic_media_play)
+            .setContentTitle(title)
             .setContentText(elapsed)
             .setOngoing(true)
             .setShowWhen(false)
             .setOnlyAlertOnce(true)
             .setContentIntent(openIntent)
-            .addAction(icon, if (paused) "Resume" else "Pause", pauseResumeIntent)
+            .addAction(actionIcon, if (paused) "Resume" else "Pause", pauseResumeIntent)
             .addAction(android.R.drawable.ic_delete, "Stop", stopIntent)
             .build()
     }

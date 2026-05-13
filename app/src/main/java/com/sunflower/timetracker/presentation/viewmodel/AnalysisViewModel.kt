@@ -90,7 +90,8 @@ class AnalysisViewModel @Inject constructor(
                     tagId = tagId,
                     startTime = startTime,
                     endTime = endTime,
-                    durationMs = endTime - startTime
+                    durationMs = endTime - startTime,
+                    latestStartTime = startTime
                 )
             )
         }

@@ -87,7 +87,7 @@ import com.sunflower.timetracker.util.parseColor
 fun HomeScreen(vm: HomeViewModel) {
     val tags by vm.tags.collectAsState()
     val active by vm.activeState.collectAsState()
-    val elapsedMs by vm.elapsedMs.collectAsState()
+    val durationMs by vm.durationMs.collectAsState()
 
     var selectedTagId by remember { mutableStateOf<Long?>(null) }
     var showAddTag by remember { mutableStateOf(false) }
@@ -138,7 +138,7 @@ fun HomeScreen(vm: HomeViewModel) {
             TimerCard(
                 isRunning = hasSession,
                 isPaused = isPaused,
-                elapsedMs = elapsedMs,
+                elapsedMs = durationMs,
                 activeTagName = active.tag?.name,
                 activeTagColor = active.tag?.colorHex,
                 onPause = { vm.pauseTimer() },
